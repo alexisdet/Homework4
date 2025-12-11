@@ -1,8 +1,8 @@
 /* Name: Alexis Detorres
-  Date created: 11/19/2025
-  Date last edited: 12/6/2025
-  Version: 2.8 
-  Description: JS 4 form for Alixia Medical
+  Date created: 12/10/2025
+  Date last edited: 12/10/2025
+  Version: EXTRA CREDIT 1.0
+  Description: JS for Alixia Medical Extra Credit with Modal Enhancement
 */
 
 
@@ -88,7 +88,8 @@ function validatePassword(input, errorEl) {
   if (!/[a-z]/.test(pass)) errors.push('• Missing lowercase');
   if (!/[A-Z]/.test(pass)) errors.push('• Missing uppercase');
   if (!/[0-9]/.test(pass)) errors.push('• Missing number');
-  if (!/[!@#$%^&*()_\-\\/+.,~<>]/.test(pass)) errors.push('• Missing special char');  if (/"/.test(pass)) errors.push('• No double quotes');
+  if (!/[!@#$%^&*()_\-\\/+.,~<>]/.test(pass)) errors.push('• Missing special char');
+  if (/"/.test(pass)) errors.push('• No double quotes');
   if (uid && pass.toLowerCase().includes(uid)) errors.push('• Cannot contain UserID');
 
   errorEl.textContent = errors.join('\n');
@@ -111,7 +112,16 @@ function isFormValid() {
     input.dispatchEvent(new Event('blur'));
   });
   const invalidElements = document.querySelectorAll('.invalid');
-  return invalidElements.length === 0;
+  
+  // Also check if required fields are empty
+  let hasEmptyRequired = false;
+  document.querySelectorAll('[required]').forEach(field => {
+    if (!field.value || field.value.trim() === '') {
+      hasEmptyRequired = true;
+    }
+  });
+  
+  return invalidElements.length === 0 && !hasEmptyRequired;
 }
 
 /* Helper Functions */
@@ -158,51 +168,225 @@ function hideAlert() {
   if (alertBox) alertBox.style.display = 'none';
 }
 
-// Gathers all form data and dynamically generates the HTML table for the review panel.
-function reviewInput() {
-  const out = document.getElementById('reviewArea');
-  if (!out) return;
+/* ========== MODAL FUNCTIONS FOR EXTRA CREDIT ========== */
 
-  const illnesses = checksVal('illness').join(', ') || 'None';
-  const vaccinated = radioVal('vaccinated') || '—';
-  const insurance = radioVal('insurance') || '—';
-  const symptoms = (document.getElementById('symptoms')?.value || '').trim() || '—';
-  const maskSSN = (s) => s.replace(/^(\d{3})-(\d{2})-(\d{4})$/, '***-**-$3');
+// Collects all form data into an object
+function collectFormData() {
+  return {
+    firstname: val('firstname'),
+    middleinitial: val('middleinitial'),
+    lastname: val('lastname'),
+    dob: val('dob'),
+    ssn: val('ssn'),
+    addr1: val('addr1'),
+    addr2: val('addr2'),
+    city: val('city'),
+    state: val('stateList'),
+    zip: val('zip'),
+    email: val('email'),
+    tel: val('tel'),
+    gender: radioVal('gender'),
+    userid: val('userid'),
+    password: val('passid'),
+    symptoms: val('symptoms'),
+    illness: checksVal('illness').join(', ') || 'None selected',
+    vaccinated: radioVal('vaccinated'),
+    insurance: radioVal('insurance'),
+    income: val('range'),
+    emergencyName: val('emergencyName'),
+    relationship: val('relationship'),
+    emgemail: val('emgemail'),
+    emgphone: val('emgphone')
+  };
+}
 
-  // Helper to format the range value as currency (200,000 to 500,000)
+// Displays collected data in the modal with styling
+function displayInModal(data, isValid) {
+  const modalDisplay = document.getElementById('modalDataDisplay');
+  if (!modalDisplay) return;
+  
+  // Helper to mask SSN
+  const maskSSN = (ssn) => {
+    if (!ssn || ssn.length < 4) return '***-**-****';
+    return '***-**-' + ssn.slice(-4);
+  };
+  
+  // Helper to format salary
   const formatSalary = (val) => {
     if (!val) return '—';
-    // Range is stored in thousands, multiply by 1000
     const salary = parseInt(val) * 1000;
     return `$${salary.toLocaleString('en-US')}`;
   };
+  
+  // Helper to check if a field has an error
+  const hasError = (fieldId) => {
+    const field = document.getElementById(fieldId);
+    return field && (field.classList.contains('invalid') || !field.value || field.value.trim() === '');
+  };
+  
+  // Build full name
+  const fullName = `${data.firstname} ${data.middleinitial} ${data.lastname}`.replace(/\s+/g, ' ').trim();
+  
+  // Build full address
+  const fullAddress = `${data.addr1} ${data.addr2}`.replace(/\s+/g, ' ').trim();
+  const cityStateZip = `${data.city}, ${data.state} ${data.zip}`.replace(/,\s*,/g, ',').trim();
+  
+  let html = '<div style="padding: 10px;">';
+  
+  // Patient Details Section
+  html += '<div style="margin-bottom: 25px;">';
+  html += '<h3 style="color: #082b4d; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #082b4d; padding-bottom: 8px;">PATIENT DETAILS</h3>';
+  
+  html += `<div class="data-row ${hasError('firstname') || hasError('lastname') ? 'error' : ''}">
+    <span class="data-label">Full Name:</span>
+    <span class="data-value">${fullName || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('dob') ? 'error' : ''}">
+    <span class="data-label">Date of Birth:</span>
+    <span class="data-value">${data.dob || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('gender') ? 'error' : ''}">
+    <span class="data-label">Gender:</span>
+    <span class="data-value">${data.gender || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('ssn') ? 'error' : ''}">
+    <span class="data-label">SSN:</span>
+    <span class="data-value">${data.ssn ? maskSSN(data.ssn) : '<em style="color: #f44336;">Missing or Invalid</em>'}</span>
+  </div>`;
+  
+  html += '</div>';
+  
+  // Contact Information Section
+  html += '<div style="margin-bottom: 25px;">';
+  html += '<h3 style="color: #082b4d; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #082b4d; padding-bottom: 8px;">CONTACT INFORMATION</h3>';
+  
+  html += `<div class="data-row ${hasError('addr1') ? 'error' : ''}">
+    <span class="data-label">Address:</span>
+    <span class="data-value">${fullAddress || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('city') || hasError('stateList') || hasError('zip') ? 'error' : ''}">
+    <span class="data-label">City, State ZIP:</span>
+    <span class="data-value">${cityStateZip || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('email') ? 'error' : ''}">
+    <span class="data-label">Email:</span>
+    <span class="data-value">${data.email || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('tel') ? 'error' : ''}">
+    <span class="data-label">Phone:</span>
+    <span class="data-value">${data.tel || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += '</div>';
+  
+  // Account Information Section
+  html += '<div style="margin-bottom: 25px;">';
+  html += '<h3 style="color: #082b4d; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #082b4d; padding-bottom: 8px;">ACCOUNT INFORMATION</h3>';
+  
+  html += `<div class="data-row ${hasError('userid') ? 'error' : ''}">
+    <span class="data-label">User ID:</span>
+    <span class="data-value">${data.userid || '<em style="color: #f44336;">Missing or Invalid</em>'}</span>
+  </div>`;
+  
+  const passwordStatus = hasError('passid') ? '<em style="color: #f44336;">Missing or Invalid</em>' : '<strong style="color: #4CAF50;">✓ Valid</strong>';
+  html += `<div class="data-row ${hasError('passid') ? 'error' : ''}">
+    <span class="data-label">Password:</span>
+    <span class="data-value">${passwordStatus}</span>
+  </div>`;
+  
+  html += '</div>';
+  
+  // Health Information Section
+  html += '<div style="margin-bottom: 25px;">';
+  html += '<h3 style="color: #082b4d; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #082b4d; padding-bottom: 8px;">HEALTH INFORMATION</h3>';
+  
+  html += `<div class="data-row ${hasError('symptoms') ? 'error' : ''}">
+    <span class="data-label">Symptoms:</span>
+    <span class="data-value">${data.symptoms || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row">
+    <span class="data-label">Illness History:</span>
+    <span class="data-value">${data.illness}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('vaccinated') ? 'error' : ''}">
+    <span class="data-label">Vaccinated:</span>
+    <span class="data-value">${data.vaccinated || '<em style="color: #f44336;">Not selected</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('insurance') ? 'error' : ''}">
+    <span class="data-label">Insurance:</span>
+    <span class="data-value">${data.insurance || '<em style="color: #f44336;">Not selected</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row">
+    <span class="data-label">Annual Income:</span>
+    <span class="data-value">${formatSalary(data.income)}</span>
+  </div>`;
+  
+  html += '</div>';
+  
+  // Emergency Contact Section
+  html += '<div style="margin-bottom: 15px;">';
+  html += '<h3 style="color: #082b4d; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #082b4d; padding-bottom: 8px;">EMERGENCY CONTACT</h3>';
+  
+  html += `<div class="data-row ${hasError('emergencyName') ? 'error' : ''}">
+    <span class="data-label">Contact Name:</span>
+    <span class="data-value">${data.emergencyName || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('relationship') ? 'error' : ''}">
+    <span class="data-label">Relationship:</span>
+    <span class="data-value">${data.relationship || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('emgemail') ? 'error' : ''}">
+    <span class="data-label">Email:</span>
+    <span class="data-value">${data.emgemail || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += `<div class="data-row ${hasError('emgphone') ? 'error' : ''}">
+    <span class="data-label">Phone:</span>
+    <span class="data-value">${data.emgphone || '<em style="color: #f44336;">Missing</em>'}</span>
+  </div>`;
+  
+  html += '</div>';
+  
+  // Error summary if form is not valid
+  if (!isValid) {
+    html += `<div class="error-summary">
+      ⚠ Please go back and correct the errors highlighted in red before submitting.
+    </div>`;
+  }
+  
+  html += '</div>';
+  
+  modalDisplay.innerHTML = html;
+}
 
-  const rows = [
-    ['First, MI, Last Name', `${val('firstname')} ${val('middleinitial')} ${val('lastname')}`.replace(/\s+/g,' ').trim()],
-    ['Date of Birth', val('dob')],
-    ['Email address', val('email')],
-    ['Phone number', val('tel')],
-    ['Address', `${val('addr1')} ${val('addr2')}`.replace(/\s+/g,' ').trim()],
-    ['City/State/ZIP', `${val('city')}, ${val('state')} ${val('zip')}`.replace(/,\s*,/g, ',').trim()],
-    ['Illnesses', illnesses],
-    ['Vaccinated?', vaccinated],
-    ['Insurance?', insurance],
-    ['Annual Income', formatSalary(val('range'))], 
-    ['Described Symptoms', symptoms],
-    ['User ID', val('userid')],
-    ['Password', '•••••••'],
-    ['SSN', maskSSN(val('ssn') || '')],
-  ];
+// Shows the modal
+function showModal() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) {
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  }
+}
 
-  out.innerHTML = `
-    <table class="output">
-      <tr><td class="outputdata" colspan="2" style="text-align:center;"><strong>PLEASE REVIEW THIS INFORMATION</strong></td></tr>
-      ${rows.map(([k,v]) => `
-        <tr class="output">
-          <td class="outputdata" style="width:60%;">${k}</td>
-          <td class="outputdata">${v || '—'}</td>
-        </tr>`).join('')}
-    </table>`;
+// Hides the modal
+function hideModal() {
+  const modal = document.getElementById('confirmModal');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore scrolling
+  }
 }
 
 /* JSON/Fetch Code */
@@ -230,22 +414,28 @@ async function loadStates() {
 
 /*  Cookie Functions  */
 
-// Standard function to set a cookie with an expiry date.
-function setCookie(name, cvalue, expiryDays) {
-  var day = new Date();
-  day.setTime(day.getTime() + (expiryDays * 24 * 60 * 60 * 1000));
-  var expires = "expires=" + day.toUTCString();
-  document.cookie = name + "=" + encodeURIComponent(cvalue) + ";" + expires + ";path=/";
+// Sets a cookie with a given name, value, and expiration in days
+function setCookie(name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }
 
-// Standard function to retrieve a cookie's value by name.
+// Retrieves a cookie value by name; returns an empty string if not found.
 function getCookie(name) {
-  var cookieName = name + "=";
-  var cookies = document.cookie.split(';');
-  for (var i = 0; i < cookies.length; i++) {
-    var cookie = cookies[i].trim();
-    if (cookie.indexOf(cookieName) === 0) {
-      return decodeURIComponent(cookie.substring(cookieName.length));
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1, c.length);
+    }
+    if (c.indexOf(nameEQ) === 0) {
+      return c.substring(nameEQ.length, c.length);
     }
   }
   return "";
@@ -264,8 +454,8 @@ function deleteAllCookies() {
 const cookieFields = [
   { id: "userid", cookieName: "userid" },
   { id: "firstname", cookieName: "firstName" },
-  { id: "middleinitial", cookieName: "middleInitial" }, // Added
-  { id: "lastname", cookieName: "lastName" },         // Added
+  { id: "middleinitial", cookieName: "middleInitial" },
+  { id: "lastname", cookieName: "lastName" },
   { id: "email", cookieName: "email" },
   { id: "tel", cookieName: "phone" },
   { id: "range", cookieName: "incomeRange" },
@@ -444,36 +634,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. Button/Form Event Listeners
-  const form = document.querySelector('form');
+  // 3. MODAL EVENT LISTENERS (EXTRA CREDIT ENHANCEMENT)
+  const checkDataBtn = document.getElementById('checkDataBtn');
+  const modal = document.getElementById('confirmModal');
+  const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+  const goBackBtn = document.getElementById('goBackBtn');
+  
+  // When user clicks "Check My Data" button
+  if (checkDataBtn) {
+    checkDataBtn.addEventListener('click', function() {
+      // Validate all fields
+      const isValid = isFormValid();
+      
+      // Collect all form data
+      const formData = collectFormData();
+      
+      // Display data in modal
+      displayInModal(formData, isValid);
+      
+      // Show the modal
+      showModal();
+      
+      // Enable/disable submit button based on validation
+      if (modalSubmitBtn) {
+        modalSubmitBtn.disabled = !isValid;
+      }
+    });
+  }
+  
+  // When user clicks "GO BACK" button in modal
+  if (goBackBtn) {
+    goBackBtn.addEventListener('click', function() {
+      hideModal();
+    });
+  }
+  
+  // When user clicks "SUBMIT" button in modal
+  if (modalSubmitBtn) {
+    modalSubmitBtn.addEventListener('click', function() {
+      if (!modalSubmitBtn.disabled) {
+        // Redirect to thank you page
+        window.location.href = 'extracreditthankyou.html';
+      }
+    });
+  }
+  
+  // Close modal if user clicks outside of it
+  if (modal) {
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        hideModal();
+      }
+    });
+  }
+
+  // 4. Form submit prevention (since we're handling it with the modal)
+  const form = document.getElementById('mainForm');
   if (form) {
     form.addEventListener('submit', (e) => {
-      const browserOK = form.checkValidity();
-      const customOK = isFormValid();
-      if (!browserOK || !customOK) {
-        e.preventDefault();
-        showAlert('Please fix the errors highlighted in red before submitting.');
-      }
+      e.preventDefault(); // Always prevent default form submission
+      // Instead, show the modal
+      checkDataBtn.click();
     });
   }
 
-  const validateBtn = document.getElementById('validate');
-  if (validateBtn) {
-    validateBtn.addEventListener('click', () => {
-      if (isFormValid()) {
-        hideAlert();
-        alert("Everything looks good!");
-      } else {
-        showAlert('Please fix the errors highlighted in red.');
-      }
-    });
-  }
-
-  const reviewBtn = document.getElementById('review');
-  if (reviewBtn) {
-    reviewBtn.addEventListener('click', reviewInput);
-  }
-
-  // 4. Load Welcome Message
+  // 5. Load Welcome Message
   loadWelcomeMessage();
 });

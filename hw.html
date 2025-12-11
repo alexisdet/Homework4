@@ -1,15 +1,15 @@
 <!-- Name: Alexis Detorres
-  Date created: 11/19/2025
-  Date last edited: 12/6/2025
-  Version: 0.10
-  Description: HTML FORM 4 -->
+  Date created: 12/10/2025
+  Date last edited: 12/10/2025
+  Version: EXTRA CREDIT 1.0
+  Description: Extra Credit HTML FORM with Modal Enhancement -->
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
-  <title>Alixia Medical</title>
+  <title>Alixia Medical - Extra Credit</title>
   <link rel="stylesheet" href="hw4.css">
 </head>
 
@@ -31,7 +31,7 @@
     <p>Please fill out the form below to get started.</p>
   </center>
 
-  <form action="thankyou4.html" method="">
+  <form id="mainForm" action="extracreditthankyou.html" method="">
 
     <div class="section-header">PATIENT DETAILS</div>
 
@@ -142,7 +142,7 @@
         <input type="checkbox" name="illness" value="Eczema"> Eczema
         <input type="checkbox" name="illness" value="Allergies"> Allergies
         <input type="checkbox" name="illness" value="Other"> Other
-        <input type="checkbox" name="illness" value="Other"> None
+        <input type="checkbox" name="illness" value="None"> None
       </div>
     </div>
 
@@ -191,11 +191,10 @@
       <input type="tel" name="emgphone" id="emgphone" required placeholder="123-456-7890">
     </div>
 
+    <!-- MODIFIED BUTTON ROW: Only Check Data and Clear buttons -->
     <div class="button-row">
-      <input type="submit" name="submit" id="submit" value="Submit">
+      <input type="button" name="checkData" id="checkDataBtn" value="Check My Data">
       <input type="reset" name="reset" id="reset" value="Clear page">
-      <input type="button" name="review" id="review" value="Review">
-      <input type="button" name="validate" id="validate" value="Validate">
     </div>
 
     <div class="form-group checkbox-group">
@@ -216,7 +215,17 @@
     </div>
   </form>
 
-  <div id="reviewArea" class="output"></div>
+  <!-- MODAL FOR DATA CONFIRMATION -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <h2>Check Your Entries</h2>
+      <div id="modalDataDisplay"></div>
+      <div class="modal-buttons">
+        <button id="modalSubmitBtn" class="modal-submit-button">SUBMIT</button>
+        <button id="goBackBtn" class="modal-goback-button">GO BACK</button>
+      </div>
+    </div>
+  </div>
 
   <div id="alert-box">
     <div id="alert-content">
