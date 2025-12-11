@@ -1,0 +1,303 @@
+<!-- Name: Alexis Detorres
+  Date created: 11/19/2025
+  Date last edited: 12/10/2025
+  Version: 3.0
+  Description: HTML FORM 4 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Alixia Medical</title>
+  <link rel="stylesheet" href="hw4.css">
+</head>
+
+<body>
+  <header class="header-container">
+    <div class="logo">
+      <img src="tplogo.png" alt="Alixia Medical" width="200px" id="logo">
+    </div>
+
+    <h2 class="title">ALIXIA MEDICAL</h2>
+
+    <div class="date">
+      <p>Today's Date: <span id="today"></span></p>
+    </div>
+  </header>
+
+  <center id="welcomeContainer">
+    <h3>Welcome New User!</h3>
+    <p>Please fill out the form below to get started.</p>
+  </center>
+
+  <form action="thankyou4.html" method="">
+
+    <div class="section-header">PATIENT DETAILS</div>
+
+    <div class="form-group">
+      <label>User ID<span class="required">*</span></label>
+      <input type="text" name="userid" id="userid" maxlength="30" required title="Enter User ID" placeholder="Alexis12250" />
+      <span class="error" id="userid-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Password<span class="required">*</span></label>
+      <input type="password" name="passid" id="passid" required title="Password" placeholder="Password123$" />
+      <span class="error" id="passid-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Confirm Password<span class="required">*</span></label>
+      <input type="password" name="confirmpass" id="confirmpass" required title="Re-enter your password to confirm" placeholder="Password123$" />
+      <span class="error" id="confirmpass-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="firstname">Full Name<span class="required">*</span></label>
+
+      <input type="text" id="firstname" name="firstname" maxlength="30" required title="Enter your first name" placeholder="First" />
+      <span class="error" id="firstname-error"></span>
+
+      <input type="text" id="middleinitial" name="middleinitial" maxlength="1" title="Middle initial" placeholder="Middle" />
+      <span class="error" id="middleinitial-error"></span>
+
+      <input type="text" id="lastname" name="lastname" maxlength="30" required title="Enter your last name" placeholder="Last" />
+      <span class="error" id="lastname-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Date of Birth<span class="required">*</span></label>
+      <input type="date" name="dob" id="dob" required title="Select DOB" />
+      <span class="error" id="dob-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>SSN<span class="required">*</span></label>
+      <input type="password" name="ssn" id="ssn" minlength="9" maxlength="11" placeholder="123-45-6789" required title="Enter SSN" />
+      <span class="error" id="ssn-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Address Line 1<span class="required">*</span></label>
+      <input type="text" name="addr1" id="addr1" minlength="2" maxlength="30" required title="Enter address" placeholder="1212 StreetName" />
+      <span class="error" id="addr1-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Address Line 2</label>
+      <input type="text" name="addr2" id="addr2" minlength="2" maxlength="30" title="Enter apartment/suite" placeholder="33 Apartment" />
+    </div>
+
+    <!-- ZIP FIRST for API, as suggested -->
+    <div class="form-group">
+      <label>ZIP Code<span class="required">*</span></label>
+      <input type="text" name="zip" id="zip" minlength="5" maxlength="10" required title="ZIP format 12345 or 12345-6789" placeholder="12345" />
+      <span class="error" id="zip-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Email<span class="required">*</span></label>
+      <input type="email" name="email" id="email" required title="Enter Email" placeholder="alexis12250@gmail.com" />
+      <span class="error" id="email-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Phone<span class="required">*</span></label>
+      <input type="tel" name="tel" id="tel" required title="Enter Phone Number" placeholder="123-456-7890" />
+      <span class="error" id="tel-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Gender<span class="required">*</span></label>
+      <div>
+        <input type="radio" name="gender" value="Male" required> Male
+        <input type="radio" name="gender" value="Female"> Female
+        <input type="radio" name="gender" value="Other"> Other
+      </div>
+    </div>
+
+    <!-- City is now read-only, filled from ZIP API -->
+    <div class="form-group">
+      <label>City<span class="required">*</span></label>
+      <input type="text" name="city" id="city" minlength="2" maxlength="30" required
+             title="City is auto-filled from ZIP" placeholder="Will be filled from ZIP" readonly />
+      <span class="error" id="city-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="stateList">State<span class="required">*</span></label>
+      <select id="stateList" name="state" required>
+        <option value="" disabled selected>Loading states...</option>
+      </select>
+    </div>
+
+    <div class="section-header">HEALTH INFORMATION</div>
+
+    <div class="form-group">
+      <label>Describe your symptoms<span class="required">*</span></label>
+      <textarea id="symptoms" rows="3" cols="50" maxlength="200" required placeholder="Share any medical history/symptoms"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Illness History<span class="required">*</span></label>
+      <div>
+        <input type="checkbox" name="illness" value="Covid-19"> Covid-19
+        <input type="checkbox" name="illness" value="Asthma"> Asthma
+        <input type="checkbox" name="illness" value="Eczema"> Eczema
+        <input type="checkbox" name="illness" value="Allergies"> Allergies
+        <input type="checkbox" name="illness" value="Other"> Other
+        <input type="checkbox" name="illness" value="None"> None
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Vaccinated?<span class="required">*</span></label>
+      <div>
+        <input type="radio" name="vaccinated" value="Yes" required> Yes
+        <input type="radio" name="vaccinated" value="No"> No
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Insurance?<span class="required">*</span></label>
+      <div>
+        <input type="radio" name="insurance" value="Yes" required> Yes
+        <input type="radio" name="insurance" value="No"> No
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="range">What is your annual income?</label><br>
+      <input type="range" name="range" id="range" min="200" max="500" value="350" step="1">
+      <span id="range-slider">$350,000</span>
+    </div>
+
+    <div class="section-header">EMERGENCY CONTACT</div>
+
+    <div class="form-group">
+      <label>Contact Name<span class="required">*</span></label>
+      <input type="text" id="emergencyName" required placeholder="Sarah">
+    </div>
+
+    <div class="form-group">
+      <label>Relationship<span class="required">*</span></label>
+      <input type="text" id="relationship" required placeholder="Your relationship (e.g., Sister, Parent)">
+    </div>
+
+    <div class="form-group">
+      <label>Email<span class="required">*</span></label>
+      <input type="email" name="emgemail" id="emgemail" required placeholder="alexis12250@gmail.com" />
+      <span class="error" id="emgemail-error"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Phone<span class="required">*</span></label>
+      <input type="tel" name="emgphone" id="emgphone" required placeholder="123-456-7890">
+      <span class="error" id="emgphone-error"></span>
+    </div>
+
+    <!-- BUTTON ROW: fake submit + reset -->
+    <div class="button-row">
+      <!-- Fake submit that opens modal, NOT a real submit -->
+      <button type="button" id="check-entries">Submit</button>
+      <input type="reset" name="reset" id="reset" value="Clear page">
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label for="remember-me">Remember Me:</label>
+      <input type="checkbox" id="remember-me" name="remember-me" />
+      <span class="error" id="rememberme-error"></span>
+    </div>
+
+    <div class="passid-message">
+      <div id="msg1"></div>
+      <div id="msg2"></div>
+      <div id="msg3"></div>
+      <div id="msg4"></div>
+      <div id="msg5"></div>
+      <div id="msg6"></div>
+      <div id="msg7"></div>
+      <div id="msg8"></div>
+    </div>
+
+    <!-- MODAL for Enhancement 1 -->
+    <div id="confirm-modal" class="modal">
+      <div class="modal-content">
+        <h2>Check your entries...</h2>
+        <!-- review table injected here -->
+        <div id="modal-body"></div>
+
+        <div class="modal-buttons">
+          <!-- REAL submit lives here -->
+          <button type="submit" id="modal-submit">Submit</button>
+          <button type="button" id="modal-back">Go Back</button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- optional on-page review area (still works with reviewInput) -->
+  <div id="reviewArea" class="output"></div>
+
+  <!-- Existing alert box -->
+  <div id="alert-box">
+    <div id="alert-content">
+      <h4>Please fix the errors highlighted in red before submitting. </h4>
+      <button id="close-alert">OK</button>
+    </div>
+  </div>
+
+  <div class="iframe-container">
+    <iframe width="100%" height="300" src="https://www.youtube.com/embed/idrbwnWLJ7w" title="Medical Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+              encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  </div>
+
+  <footer>
+    <div class="footer-columns">
+      <div class="footer-column">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Community</h3>
+        <ul>
+          <li><a href="#">Forum</a></li>
+          <li><a href="#">Donate</a></li>
+          <li><a href="#">Newsletter</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Live chat</a></li>
+          <li><a href="#">Wellness Tips</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <table class="copyright" style="width:100%; text-align:center; background-color:#fff; padding:10px 0;">
+    <tr>
+      <th>©2025 Alixia Medical | All Rights Reserved</th>
+    </tr>
+  </table>
+
+  <script src="hw4.js"></script>
+</body>
+
+</html>
