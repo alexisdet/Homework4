@@ -1,9 +1,8 @@
 <!-- Name: Alexis Detorres
   Date created: 11/19/2025
-  Date last edited: 12/10/2025
-  Version: 3.0
-  Description: HTML FORM 4 
--->
+  Date last edited: 12/6/2025
+  Version: 0.10
+  Description: HTML FORM 4 -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -90,7 +89,6 @@
       <input type="text" name="addr2" id="addr2" minlength="2" maxlength="30" title="Enter apartment/suite" placeholder="33 Apartment" />
     </div>
 
-    <!-- ZIP FIRST for API, as suggested -->
     <div class="form-group">
       <label>ZIP Code<span class="required">*</span></label>
       <input type="text" name="zip" id="zip" minlength="5" maxlength="10" required title="ZIP format 12345 or 12345-6789" placeholder="12345" />
@@ -106,7 +104,6 @@
     <div class="form-group">
       <label>Phone<span class="required">*</span></label>
       <input type="tel" name="tel" id="tel" required title="Enter Phone Number" placeholder="123-456-7890" />
-      <span class="error" id="tel-error"></span>
     </div>
 
     <div class="form-group">
@@ -118,12 +115,9 @@
       </div>
     </div>
 
-    <!-- City is now read-only, filled from ZIP API -->
     <div class="form-group">
       <label>City<span class="required">*</span></label>
-      <input type="text" name="city" id="city" minlength="2" maxlength="30" required
-             title="City is auto-filled from ZIP" placeholder="Will be filled from ZIP" readonly />
-      <span class="error" id="city-error"></span>
+      <input type="text" name="city" id="city" minlength="2" maxlength="30" required title="Enter city" placeholder="Sugar Land" />
     </div>
 
     <div class="form-group">
@@ -148,7 +142,7 @@
         <input type="checkbox" name="illness" value="Eczema"> Eczema
         <input type="checkbox" name="illness" value="Allergies"> Allergies
         <input type="checkbox" name="illness" value="Other"> Other
-        <input type="checkbox" name="illness" value="None"> None
+        <input type="checkbox" name="illness" value="Other"> None
       </div>
     </div>
 
@@ -195,14 +189,13 @@
     <div class="form-group">
       <label>Phone<span class="required">*</span></label>
       <input type="tel" name="emgphone" id="emgphone" required placeholder="123-456-7890">
-      <span class="error" id="emgphone-error"></span>
     </div>
 
-    <!-- BUTTON ROW: fake submit + reset -->
     <div class="button-row">
-      <!-- Fake submit that opens modal, NOT a real submit -->
-      <button type="button" id="check-entries">Submit</button>
+      <input type="submit" name="submit" id="submit" value="Submit">
       <input type="reset" name="reset" id="reset" value="Clear page">
+      <input type="button" name="review" id="review" value="Review">
+      <input type="button" name="validate" id="validate" value="Validate">
     </div>
 
     <div class="form-group checkbox-group">
@@ -221,28 +214,10 @@
       <div id="msg7"></div>
       <div id="msg8"></div>
     </div>
-
-    <!-- MODAL for Enhancement 1 -->
-    <div id="confirm-modal" class="modal">
-      <div class="modal-content">
-        <h2>Check your entries...</h2>
-        <!-- review table injected here -->
-        <div id="modal-body"></div>
-
-        <div class="modal-buttons">
-          <!-- REAL submit lives here -->
-          <button type="submit" id="modal-submit">Submit</button>
-          <button type="button" id="modal-back">Go Back</button>
-        </div>
-      </div>
-    </div>
-
   </form>
 
-  <!-- optional on-page review area (still works with reviewInput) -->
   <div id="reviewArea" class="output"></div>
 
-  <!-- Existing alert box -->
   <div id="alert-box">
     <div id="alert-content">
       <h4>Please fix the errors highlighted in red before submitting. </h4>
